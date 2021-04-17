@@ -5,21 +5,28 @@ from bs4 import BeautifulSoup
 
 MECCA_URL = 'https://www.muslimpro.com/en/find?country_code=SA&country_name=Saudi%20Arabia&city_name=Mecca&coordinates=21.3890824,39.8579118'
 LONDON_URL = 'https://www.muslimpro.com/en/find?country_code=GB&country_name=United%20Kingdom&city_name=London&coordinates=51.5073509,-0.1277583'
+BRIGHTON_URL = 'https://www.muslimpro.com/Prayer-times-Brighton-United-Kingdom-2654710'
 
-def get_london_break_fast_time(limit_today=False):
+def get_break_fast_time(target_url, limit_today=False):
     mecca_df = get_prayer_time(MECCA_URL, limit_today=limit_today)
-    london_df = get_prayer_time(LONDON_URL, limit_today=limit_today)
+    target_df = get_prayer_time(target_url, limit_today=limit_today)
 
     mecca_fasting_diff = (mecca_df.maghrib.apply(pd.Timestamp) 
                           - mecca_df.subuh.apply(pd.Timestamp))
 
-    early_break_fast_time = (london_df.subuh.apply(pd.Timestamp) 
+    early_break_fast_time = (target_df.subuh.apply(pd.Timestamp)
                              + mecca_fasting_diff)
-    early_break_fast_time = [datetime.strftime(time, '%H:%M') 
+    early_break_fast_time = [datetime.strftime(time, '%H:%M')
                              for time in early_break_fast_time]
     
-    london_df['break (early)'] = early_break_fast_time
-    return london_df
+    target_df['break (early)'] = early_break_fast_time
+    return target_df
+
+def get_brighton_break_fast_time(limit_today=False):
+    return get_break_fast_time(BRIGHTON_URL, limit_today=limit_today)
+
+def get_london_break_fast_time(limit_today=False):
+    return get_break_fast_time(LONDON_URL, limit_today=limit_today)
 
 def get_prayer_time(url, limit_today=False):
     page = requests.get(url)

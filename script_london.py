@@ -11,7 +11,8 @@ if __name__ == '__main__':
         else:
             print("Unknown argument used. For full display, use '-f' or '--full'.")
             exit(1)
-        
+    
+    print("Getting London buka puasa time...")
     df = get_london_break_fast_time(limit_today=limit_today)
     print(df)
     
