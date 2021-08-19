@@ -4,8 +4,11 @@ import requests
 from bs4 import BeautifulSoup
 
 MECCA_URL = 'https://www.muslimpro.com/en/find?country_code=SA&country_name=Saudi%20Arabia&city_name=Mecca&coordinates=21.3890824,39.8579118'
-LONDON_URL = 'https://www.muslimpro.com/en/find?country_code=GB&country_name=United%20Kingdom&city_name=London&coordinates=51.5073509,-0.1277583'
+LONDON_URL = 'https://www.muslimpro.com/en/find?coordinates=51.5073509%2C-0.1277583&country_code=GB&country_name=United+Kingdom&city_name=London&date=&convention=precalc'
 BRIGHTON_URL = 'https://www.muslimpro.com/Prayer-times-Brighton-United-Kingdom-2654710'
+BRIGHTON_MWL_URL = 'https://www.muslimpro.com/Prayer-times-Brighton-United-Kingdom-2654710?date=&convention=MWL&asrjuristic=Standard&highlat=Angle'
+CANTERBURY_URL = 'https://www.muslimpro.com/Prayer-times-Canterbury-United-Kingdom-2653877'
+MANCHESTER_URL = 'https://www.muslimpro.com/en/Prayer-times-Manchester-United-Kingdom-2643123'
 
 def get_break_fast_time(target_url, limit_today=False):
     mecca_df = get_prayer_time(MECCA_URL, limit_today=limit_today)
@@ -22,11 +25,17 @@ def get_break_fast_time(target_url, limit_today=False):
     target_df['break (early)'] = early_break_fast_time
     return target_df
 
+def get_manch_break_fast_time(limit_today=False):
+    return get_break_fast_time(MANCHESTER_URL, limit_today=limit_today)
+
 def get_brighton_break_fast_time(limit_today=False):
     return get_break_fast_time(BRIGHTON_URL, limit_today=limit_today)
 
 def get_london_break_fast_time(limit_today=False):
     return get_break_fast_time(LONDON_URL, limit_today=limit_today)
+
+def get_canterbury_break_fast_time(limit_today=False):
+    return get_break_fast_time(CANTERBURY_URL, limit_today=limit_today)
 
 def get_prayer_time(url, limit_today=False):
     page = requests.get(url)
@@ -69,7 +78,7 @@ def get_prayer_time(url, limit_today=False):
     df = pd.DataFrame(dict(date=dates, subuh=subuhs, maghrib=maghribs))
     return df
 
-def process_text_data(content, for_col):
-    res = content[for_col].find(text=True)
+def process_text_data(content, col_idx):
+    res = content[col_idx].find(text=True)
     res = str(res)
     return res
